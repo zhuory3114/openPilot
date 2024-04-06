@@ -33,9 +33,9 @@ class CarState(CarStateBase):
     ret = car.CarState.new_message()
 
     self.prev_cruise_buttons = self.cruise_buttons
-    self.cruise_buttons = pt_cp.vl["ASCMSteeringButton"]["ACCButtons"]
-    self.buttons_counter = pt_cp.vl["ASCMSteeringButton"]["RollingCounter"]
-    self.gap_dist_button = pt_cp.vl["ASCMSteeringButton"]["DistanceButton"]
+    self.cruise_buttons = cam_cp.vl["ASCMSteeringButton"]["ACCButtons"]
+    self.buttons_counter = cam_cp.vl["ASCMSteeringButton"]["RollingCounter"]
+    self.gap_dist_button = cam_cp.vl["ASCMSteeringButton"]["DistanceButton"]
     self.pscm_status = copy.copy(pt_cp.vl["PSCMStatus"])
     # This is to avoid a fault where you engage while still moving backwards after shifting to D.
     # An Equinox has been seen with an unsupported status (3), so only check if either wheel is in reverse (2)
@@ -98,17 +98,17 @@ class CarState(CarStateBase):
     ret.steerFaultPermanent = self.lkas_status == 3
 
     # 1 - open, 0 - closed
-    ret.doorOpen = (pt_cp.vl["BCMDoorBeltStatus"]["FrontLeftDoor"] == 1 or
-                    pt_cp.vl["BCMDoorBeltStatus"]["FrontRightDoor"] == 1 or
-                    pt_cp.vl["BCMDoorBeltStatus"]["RearLeftDoor"] == 1 or
-                    pt_cp.vl["BCMDoorBeltStatus"]["RearRightDoor"] == 1)
+    ret.doorOpen = (cam_cp.vl["BCMDoorBeltStatus"]["FrontLeftDoor"] == 1 or
+                    cam_cp.vl["BCMDoorBeltStatus"]["FrontRightDoor"] == 1 or
+                    cam_cp.vl["BCMDoorBeltStatus"]["RearLeftDoor"] == 1 or
+                    cam_cp.vl["BCMDoorBeltStatus"]["RearRightDoor"] == 1)
 
     # 1 - latched
-    ret.seatbeltUnlatched = pt_cp.vl["BCMDoorBeltStatus"]["LeftSeatBelt"] == 0
-    ret.leftBlinker = ret.leftBlinkerOn = pt_cp.vl["BCMTurnSignals"]["TurnSignals"] == 1
-    ret.rightBlinker = ret.rightBlinkerOn = pt_cp.vl["BCMTurnSignals"]["TurnSignals"] == 2
+    ret.seatbeltUnlatched = cam_cp.vl["BCMDoorBeltStatus"]["LeftSeatBelt"] == 0
+    ret.leftBlinker = ret.leftBlinkerOn = cam_cp.vl["BCMTurnSignals"]["TurnSignals"] == 1
+    ret.rightBlinker = ret.rightBlinkerOn = cam_cp.vl["BCMTurnSignals"]["TurnSignals"] == 2
 
-    ret.parkingBrake = pt_cp.vl["BCMGeneralPlatformStatus"]["ParkBrakeSwActive"] == 1
+    ret.parkingBrake = cam_cp.vl["BCMGeneralPlatformStatus"]["ParkBrakeSwActive"] == 1
     ret.cruiseState.available = pt_cp.vl["ECMEngineStatus"]["CruiseMainOn"] != 0
     ret.espDisabled = pt_cp.vl["ESPStatus"]["TractionControlOn"] != 1
     ret.accFaulted = (pt_cp.vl["AcceleratorPedal2"]["CruiseState"] == AccState.FAULTED or
@@ -118,7 +118,7 @@ class CarState(CarStateBase):
     ret.cruiseState.standstill = pt_cp.vl["AcceleratorPedal2"]["CruiseState"] == AccState.STANDSTILL
     if self.CP.networkLocation == NetworkLocation.fwdCamera:
       ret.cruiseState.speed = cam_cp.vl["ASCMActiveCruiseControlStatus"]["ACCSpeedSetpoint"] * CV.KPH_TO_MS
-      ret.stockAeb = cam_cp.vl["AEBCmd"]["AEBCmdActive"] != 0
+      ret.stockAeb = False
       # openpilot controls nonAdaptive when not pcmCruise
       if self.CP.pcmCruise:
         ret.cruiseState.nonAdaptive = cam_cp.vl["ASCMActiveCruiseControlStatus"]["ACCCruiseState"] not in (2, 3)
@@ -134,7 +134,7 @@ class CarState(CarStateBase):
     messages = []
     if CP.networkLocation == NetworkLocation.fwdCamera:
       messages += [
-        ("AEBCmd", 10),
+        #("AEBCmd", 10),
         ("ASCMLKASteeringCmd", 10),
         ("ASCMActiveCruiseControlStatus", 25),
       ]
@@ -145,7 +145,7 @@ class CarState(CarStateBase):
   def get_can_parser(CP):
     messages = [
       ("BCMTurnSignals", 1),
-      ("ECMPRDNL2", 10),
+      ("ECMPRDNL2", 40),
       ("PSCMStatus", 10),
       ("ESPStatus", 10),
       ("BCMDoorBeltStatus", 10),
@@ -153,9 +153,9 @@ class CarState(CarStateBase):
       ("EBCMWheelSpdFront", 20),
       ("EBCMWheelSpdRear", 20),
       ("EBCMFrictionBrakeStatus", 20),
-      ("AcceleratorPedal2", 33),
+      ("AcceleratorPedal2", 40),
       ("ASCMSteeringButton", 33),
-      ("ECMEngineStatus", 100),
+      ("ECMEngineStatus", 80),
       ("PSCMSteeringAngle", 100),
       ("ECMAcceleratorPos", 80),
     ]
@@ -166,7 +166,7 @@ class CarState(CarStateBase):
     # Used to read back last counter sent to PT by camera
     if CP.networkLocation == NetworkLocation.fwdCamera:
       messages += [
-        ("ASCMLKASteeringCmd", 0),
+        ("ASCMLKASteeringCmd", 10),
       ]
 
     if CP.transmissionType == TransmissionType.direct:
@@ -177,7 +177,7 @@ class CarState(CarStateBase):
   @staticmethod
   def get_loopback_can_parser(CP):
     messages = [
-      ("ASCMLKASteeringCmd", 0),
+      ("ASCMLKASteeringCmd", 10),
     ]
 
     return CANParser(DBC[CP.carFingerprint]["pt"], messages, CanBus.LOOPBACK)
