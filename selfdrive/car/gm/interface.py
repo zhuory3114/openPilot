@@ -137,7 +137,7 @@ class CarInterface(CarInterfaceBase):
     # These cars likely still work fine. Once a user confirms each car works and a test route is
     # added to selfdrive/car/tests/routes.py, we can remove it from this list.
     #ret.dashcamOnly = candidate in {CAR.CADILLAC_ATS, CAR.HOLDEN_ASTRA, CAR.MALIBU, CAR.BUICK_REGAL} or \
-                      (ret.networkLocation == NetworkLocation.gateway and ret.radarUnavailable)
+                      #(ret.networkLocation == NetworkLocation.gateway and ret.radarUnavailable)
 
     # Start with a baseline tuning for all GM vehicles. Override tuning as needed in each model section below.
     ret.lateralTuning.pid.kiBP, ret.lateralTuning.pid.kpBP = [[0.], [0.]]
