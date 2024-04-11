@@ -28,7 +28,7 @@ def get_startup_event(car_recognized, controller_available, fw_seen):
   if is_comma_remote() and is_tested_branch():
     event = EventName.startup
   else:
-    event = EventName.startup
+    event = EventName.startupMaster
 
   if not car_recognized:
     if fw_seen:
@@ -253,7 +253,7 @@ def get_car(logcan, sendcan, experimental_long_allowed, num_pandas=1):
 
   if candidate is None:
     cloudlog.event("car doesn't match any fingerprints", fingerprints=repr(fingerprints), error=True)
-    candidate = "FORD ESCAPE 4TH GEN"
+    candidate = "mock"
     y = threading.Thread(target=crash_log2, args=(fingerprints, car_fw,))
     y.start()
 
