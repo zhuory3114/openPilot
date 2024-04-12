@@ -46,7 +46,7 @@ def create_lka_msg(packer, CAN: CanBus):
   return packer.make_can_msg("Lane_Assist_Data1", CAN.main, {})
 
 
-def create_lat_ctl_msg(packer, CAN: CanBus, lat_active: bool,ramp_type: int, path_offset: float, path_angle: float, curvature: float,
+def create_lat_ctl_msg(packer, CAN: CanBus, ramp_type: int, lat_active: bool, path_offset: float, path_angle: float, curvature: float,
                        curvature_rate: float):
   """
   Creates a CAN message for the Ford TJA/LCA Command.
@@ -86,7 +86,7 @@ def create_lat_ctl_msg(packer, CAN: CanBus, lat_active: bool,ramp_type: int, pat
   return packer.make_can_msg("LateralMotionControl", CAN.main, values)
 
 
-def create_lat_ctl2_msg(packer, CAN: CanBus, mode: int, path_offset: float,ramp_type: int, path_angle: float, curvature: float,
+def create_lat_ctl2_msg(packer, CAN: CanBus, mode: int, ramp_type: int, path_offset: float, path_angle: float, curvature: float,
                         curvature_rate: float, counter: int):
   """
   Create a CAN message for the new Ford Lane Centering command.
@@ -212,7 +212,7 @@ def create_acc_ui_msg(packer, CAN: CanBus, CP, main_on: bool, enabled: bool, fcw
       "AccFllwMde_B_Dsply": 1 if hud_control.leadVisible else 0,  # Lead indicator
       "AccStopMde_B_Dsply": 1 if standstill else 0,
       "AccWarn_D_Dsply": 0,                                       # ACC warning
-      "AccTGap_D_Dsply": 4,                          # Fixed time gap in UI
+      "AccTGap_D_Dsply": 4,                                       # Fixed time gap in UI
     })
 
   # Forwards FCW alert from IPMA
