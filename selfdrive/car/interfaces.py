@@ -467,7 +467,7 @@ class CarInterfaceBase(ABC):
       if cs_out.vEgo < 5:
         events.add(EventName.silentWrongGear)
       else:
-        events.add(EventName.wrongGear)
+        pass#events.add(EventName.wrongGear)
     if cs_out.gearShifter == GearShifter.reverse:
       if not self.reverse_dm_cam and cs_out.vEgo < 5:
         events.add(EventName.spReverseGear)
