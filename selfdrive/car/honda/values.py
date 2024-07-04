@@ -238,7 +238,7 @@ class CAR(Platforms):
   HONDA_ODYSSEY_CHN = HondaNidecPlatformConfig(
     [],  # Chinese version of Odyssey, don't show in docs
     HONDA_ODYSSEY.specs,
-    dbc_dict('honda_odyssey_extreme_edition_2018_china_can_generated', 'acura_ilx_2016_nidec'),
+    dbc_dict('honda_odyssey_exl_2018_generated', 'acura_ilx_2016_nidec'),
     flags=HondaFlags.NIDEC_ALT_SCM_MESSAGES,
   )
   ACURA_RDX = HondaNidecPlatformConfig(
