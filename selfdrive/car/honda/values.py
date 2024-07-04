@@ -236,7 +236,7 @@ class CAR(Platforms):
     flags=HondaFlags.NIDEC_ALT_PCM_ACCEL,
   )
   HONDA_ODYSSEY_CHN = HondaNidecPlatformConfig(
-    [],  # Chinese version of Odyssey, don't show in docs
+    [HondaCarDocs("Honda Odyssey 2019CHN")],  # Chinese version of Odyssey, don't show in docs
     HONDA_ODYSSEY.specs,
     dbc_dict('honda_odyssey_exl_2018_generated', 'acura_ilx_2016_nidec'),
     flags=HondaFlags.NIDEC_ALT_SCM_MESSAGES,
